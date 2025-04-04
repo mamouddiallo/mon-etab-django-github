@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Éducation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .square-card {
+            width: 620px;  /* Largeur augmentée */
+            height: 370px; /* Hauteur augmentée */
+            margin: 0 auto; /* Centrage horizontal */
+        }
+        
+        /* CSS-only pie chart */
+        .pie-chart {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff6384 0% 54%,  /* Filles (680/1254 ≈ 54%) */
+                #36a2eb 54% 100%  /* Garçons (574/1254 ≈ 46%) */
+            );
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .pie-chart::before {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            background: white;
+            border-radius: 50%;
+            top: 15%;
+            left: 15%;
+        }
+        
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-gradient-to-b from-indigo-900 to-indigo-800 text-white w-64 py-6 px-4 flex flex-col">
+            <div class="flex items-center justify-center mb-8">
+                <i class="fas fa-graduation-cap text-2xl mr-2 text-indigo-300"></i>
+                <h1 class="text-xl font-bold">MonEtab</h1>
+            </div>
+            
+            <nav class="flex-1">
+                <a href="{% url 'user:home' %}" class="flex items-center py-3 px-4 rounded-lg bg-indigo-700 text-white mb-2">
+                    <i class="fas fa-home mr-3 text-indigo-300"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="{% url 'teacher:list'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-chalkboard-teacher mr-3 text-indigo-300"></i>
+                    <span>Professeur</span>
+                </a>
+                <a href="{% url 'student:list'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-user-graduate mr-3 text-indigo-300"></i>
+                    <span>Élèves</span>
+                </a>
+                <a href="{% url 'user:list'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-users mr-3 text-indigo-300"></i>
+                    <span>Utilisateur</span>
+                </a>
+                <a href="{% url 'user:afficher_school'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-school mr-3 text-indigo-300"></i>
+                    <span>École</span>
+                </a>
+                <a href="{% url 'user:afficher_appsetting'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-cog mr-3 text-indigo-300"></i>
+                    <span>Paramètre École</span>
+                </a>
+                <a href="{% url 'rapport:rapport' %}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-file-alt mr-3 text-indigo-300"></i>
+                    <span>Rapport</span>
+                </a>
+            </nav>
+            
+            <div class="mt-auto border-t border-indigo-700/50 pt-3">
+                <div class="flex items-center justify-between px-2 py-1">
+                    <!-- Admin Label -->
+                    <span class="text-xs font-medium text-indigo-300">Admin</span>
+                    
+                    <!-- Logout Button -->
+                    <a href="{% url 'user:logout' %}" 
+                       class="p-1.5 rounded-md text-indigo-300 hover:text-white hover:bg-indigo-700/30 transition-colors"
+                       title="Déconnexion">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm py-4 px-6 flex items-center justify-between">
+                <div class="flex items-center">
+                    <button class="mr-4 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="text-xl font-semibold text-gray-800">Tableau de Bord</h2>
+                </div>
+                
+            
+            </header>
+            
+            <!-- Dashboard Content -->
+            <main class="p-6">
+                <!-- 4 Square Cards - Centrées et de taille moyenne -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6 justify-items-center">
+                    <!-- Card 1: Nombre d'élèves -->
+                    <div class="square-card card-hover bg-white rounded-xl shadow-sm p-6 transition-all duration-300 flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Élèves</h3>
+                            <div class="bg-indigo-100 text-indigo-600 p-3 rounded-lg">
+                                <i class="fas fa-user-graduate text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-center">
+                            <p class="text-4xl font-bold text-center text-gray-800">{{ students|length }}</p>
+                            <p class="text-green-500 text-sm mt-2 text-center flex items-center justify-center">
+                                <i class="fas fa-arrow-up mr-1"></i> eleves
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 2: Nombre de profs -->
+                    <div class="square-card card-hover bg-white rounded-xl shadow-sm p-6 transition-all duration-300 flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Professeurs</h3>
+                            <div class="bg-blue-100 text-blue-600 p-3 rounded-lg">
+                                <i class="fas fa-chalkboard-teacher text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-center">
+                            <p class="text-4xl font-bold text-center text-gray-800">{{ teacher|length }}</p>
+                            <p class="text-green-500 text-sm mt-2 text-center flex items-center justify-center">
+                                <i class="fas fa-arrow-up mr-1"></i> Professeurs
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 3: Nombre d'utilisateurs -->
+                    <div class="square-card card-hover bg-white rounded-xl shadow-sm p-6 transition-all duration-300 flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Utilisateurs</h3>
+                            <div class="bg-purple-100 text-purple-600 p-3 rounded-lg">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 flex flex-col justify-center">
+                            <p class="text-4xl font-bold text-center text-gray-800">{{ user|length }}</p>
+                            <p class="text-green-500 text-sm mt-2 text-center flex items-center justify-center">
+                                <i class="fas fa-arrow-up mr-1"></i> utilisateurs
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Card 4: Diagramme circulaire filles/garçons -->
+                    <div class="square-card card-hover bg-white rounded-xl shadow-sm p-6 transition-all duration-300 flex flex-col">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">Répartition par genre</h3>
+                            <div class="bg-pink-100 text-pink-600 p-3 rounded-lg">
+                                <i class="fas fa-venus-mars text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center justify-center">
+                            <div class="pie-chart"></div>
+                            <div class="chart-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color bg-[#ff6384]"></div>
+                                    <span>Filles {{ filles|length }}</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color bg-[#36a2eb]"></div>
+                                    <span>Garçons {{ garcons|length }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

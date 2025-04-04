@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Éducation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .square-card {
+            width: 620px;  /* Largeur augmentée */
+            height: 370px; /* Hauteur augmentée */
+            margin: 0 auto; /* Centrage horizontal */
+        }
+        
+        /* CSS-only pie chart */
+        .pie-chart {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff6384 0% 54%,  /* Filles (680/1254 ≈ 54%) */
+                #36a2eb 54% 100%  /* Garçons (574/1254 ≈ 46%) */
+            );
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .pie-chart::before {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            background: white;
+            border-radius: 50%;
+            top: 15%;
+            left: 15%;
+        }
+        
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-gradient-to-b from-indigo-900 to-indigo-800 text-white w-64 py-6 px-4 flex flex-col">
+            <div class="flex items-center justify-center mb-8">
+                <i class="fas fa-graduation-cap text-2xl mr-2 text-indigo-300"></i>
+                <h1 class="text-xl font-bold">MonEtab</h1>
+            </div>
+            
+            <nav class="flex-1">
+                <a href="{% url 'user:home' %}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-white mb-2">
+                    <i class="fas fa-home mr-3 text-indigo-300"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="{% url 'teacher:list'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-chalkboard-teacher mr-3 text-indigo-300"></i>
+                    <span>Professeur</span>
+                </a>
+                <a href="{% url 'student:list'%}" class="flex items-center py-3 px-4 rounded-lg bg-indigo-700 text-gray-200 mb-2">
+                    <i class="fas fa-user-graduate mr-3 text-indigo-300"></i>
+                    <span>Élèves</span>
+                </a>
+                <a href="{% url 'user:list'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-users mr-3 text-indigo-300"></i>
+                    <span>Utilisateur</span>
+                </a>
+                <a href="{% url 'user:afficher_school'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-school mr-3 text-indigo-300"></i>
+                    <span>École</span>
+                </a>
+                <a href="{% url 'user:afficher_appsetting'%}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-cog mr-3 text-indigo-300"></i>
+                    <span>Paramètre École</span>
+                </a>
+                <a href="{% url 'rapport:rapport' %}" class="flex items-center py-3 px-4 rounded-lg hover:bg-indigo-700/50 text-gray-200 mb-2">
+                    <i class="fas fa-file-alt mr-3 text-indigo-300"></i>
+                    <span>Rapport</span>
+                </a>
+            </nav>
+            
+            <div class="mt-auto border-t border-indigo-700/50 pt-3">
+                <div class="flex items-center justify-between px-2 py-1">
+                    <!-- Admin Label -->
+                    <span class="text-xs font-medium text-indigo-300">Admin</span>
+                    
+                    <!-- Logout Button -->
+                    <a href="{% url 'user:logout' %}" 
+                       class="p-1.5 rounded-md text-indigo-300 hover:text-white hover:bg-indigo-700/30 transition-colors"
+                       title="Déconnexion">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm py-4 px-6 flex items-center justify-between position:fixed" >
+                <div class="flex items-center">
+                    <button class="mr-4 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 class="text-xl font-semibold text-gray-800">Tableau de Bord</h2>
+                </div>
+                
+            </header>
+           <!--##############################################################################################-->
+           {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                 {% endif %}
+           <!-- Main Content -->
+            <div class="flex-1 overflow-auto">
+                <!-- Top Navigation -->
+                <!-- Formulaire amélioré -->
+                <div class="min-h-screen flex items-center justify-center p-4">
+                    <div class="form-card bg-white rounded-xl w-full max-w-4xl overflow-hidden">
+                        <!-- Header avec image amélioré -->
+                        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white relative">
+                            <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3QgZmlsbD0idXJsKCNwYXR0ZXJuKSIgaGVpZ2h0PSIxMDAlIiB3aWR0aD0iMTAwJSIvPjwvc3ZnPg==')"></div>
+                            <div class="flex items-center relative z-10">
+                                <div class="bg-white/20 p-3 rounded-full mr-4">
+                                    <i class="fas fa-user-graduate text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h1 class="text-2xl font-bold">Ajouter une absence</h1>
+                                    <p class="text-indigo-100 opacity-90">Veuillez remplir tous les champs obligatoires <span class="text-white font-medium">(*)</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Formulaire -->
+                        <div class="p-6 md:p-8">
+                            <form method="POST" class="space-y-8">
+                                <!-- Section 1: Identité -->
+                                 {% csrf_token %}
+                                 <div class="space-y-6">
+                                    <h2 class="text-lg font-semibold form-header">Ajouter absence</h2>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Date d'absence -->
+                                        <div>
+                                            <label for="absence_date" class="block text-sm font-medium text-gray-700 mb-2">Date d'absence<span class="text-red-500">*</span></label>
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                    <i class="fas fa-calendar-day"></i> <!-- Icône calendrier -->
+                                                </div>
+                                                <input type="date" id="absence_date" name="absence_date" required
+                                                    class="input-field pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none transition duration-200">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Heure d'absence -->
+                                        <div>
+                                            <label for="absence_number" class="block text-sm font-medium text-gray-700 mb-2">Heure d'absence<span class="text-red-500">*</span></label>
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                                    <i class="fas fa-clock"></i> <!-- Icône horloge -->
+                                                </div>
+                                                <input type="number" id="absence_number" name="absence_number" required
+                                                    class="input-field pl-10 w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none transition duration-200">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                                                
+                                <!-- Boutons -->
+                                <div class="flex flex-col sm:flex-row justify-end gap-4 pt-6">
+                                    <button type="reset" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors duration-200 flex items-center justify-center">
+                                        <i class="fas fa-times mr-2"></i> Annuler
+                                    </button>
+                                    <button type="submit" class="px-6 py-3 rounded-lg text-white font-medium shadow-md bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-colors duration-200 flex items-center justify-center">
+                                        <i class="fas fa-save mr-2"></i> Ajouter une absence
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+           <!--##############################################################################################-->
+        </div>
+    </div>
+</body>
+</html>

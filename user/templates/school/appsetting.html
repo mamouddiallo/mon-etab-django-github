@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Éducation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+        }
+        
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .square-card {
+            width: 620px;  /* Largeur augmentée */
+            height: 370px; /* Hauteur augmentée */
+            margin: 0 auto; /* Centrage horizontal */
+        }
+        
+        /* CSS-only pie chart */
+        .pie-chart {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff6384 0% 54%,  /* Filles (680/1254 ≈ 54%) */
+                #36a2eb 54% 100%  /* Garçons (574/1254 ≈ 46%) */
+            );
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .pie-chart::before {
+            content: '';
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            background: white;
+            border-radius: 50%;
+            top: 15%;
+            left: 15%;
+        }
+        
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen overflow-hidden">
+           <!--##############################################################################################-->
+           <div class="flex-1 overflow-auto">
+            <!-- ... (le header existant reste le même) ... -->
+            
+            <!-- Contenu principal -->
+            <div class="p-6">
+                <!-- Carte du formulaire SMTP -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden card-hover transition-all duration-300 mb-6">
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-envelope mr-2 text-indigo-600"></i>
+                            Paramètres SMTP
+                        </h3>
+                        
+                        <form class="space-y-4" method="post">
+                            <!-- Serveur SMTP -->
+                             {% csrf_token %}
+                            <div>
+                                <label for="smtp_server" class="block text-sm font-medium text-gray-700 mb-1">
+                                    smtp_server
+                                </label>
+                                <input type="text" id="smtp_server" name="smtp_server" 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                    placeholder="smtp.example.com">
+                            </div>
+                            
+                            <!-- Port SMTP -->
+                            <div>
+                                <label for="smtp_port" class="block text-sm font-medium text-gray-700 mb-1">
+                                    smtp_port
+                                </label>
+                                <input type="number" id="smtp_port" name="smtp_port" 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                    placeholder="587">
+                            </div>
+                            
+                            <!-- Nom d'utilisateur SMTP -->
+                            <div>
+                                <label for="smtp_username" class="block text-sm font-medium text-gray-700 mb-1">
+                                    smtp_username
+                                </label>
+                                <input type="text" id="smtp_username" name="smtp_username" 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                                    placeholder="votre@email.com">
+                            </div>
+                            
+                            <!-- Mot de passe SMTP -->
+                            <div>
+                                <label for="smtp_password" class="block text-sm font-medium text-gray-700 mb-1">
+                                    smtp_password
+                                </label>
+                                <div class="relative">
+                                    <input type="password" id="smtp_password" name="smtp_password" 
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition pr-10"
+                                        placeholder="••••••••">
+                                    <button type="button" class="absolute right-3 top-2 text-gray-400 hover:text-gray-600" onclick="togglePasswordVisibility('smtp_password')">
+                                        <i class="far fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Boutons d'action -->
+                            <div class="flex justify-end space-x-3 pt-4">
+                                <button type="button" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                                    Annuler
+                                </button>
+                                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center">
+                                    <i class="fas fa-save mr-2"></i>
+                                    Enregistrer les paramètres
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+    
+            </div>
+            </div>
+           <!--##############################################################################################-->
+        </div>
+    </div>
+</body>
+</html>
